@@ -18,6 +18,7 @@ type UserTest = Partial<User>;
 type LoginUser = Omit<User, 'password'>;
 
 type TokenContent = {
+  role: string;
   token: string;
   user: LoginUser;
 };
