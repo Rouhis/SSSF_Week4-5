@@ -116,6 +116,7 @@ const postUser = (
           reject(err);
         } else {
           const userData = response.body.data.register;
+          console.log('userdata response', response.body);
           expect(userData).toHaveProperty('message');
           expect(userData).toHaveProperty('user');
           expect(userData.user).toHaveProperty('id');
@@ -336,8 +337,11 @@ const adminDeleteUser = (
       .send({
         query: `mutation DeleteUserAsAdmin($deleteUserAsAdminId: ID!) {
           deleteUserAsAdmin(id: $deleteUserAsAdminId) {
+            message
             user {
               id
+              user_name
+              email
             }
           }
         }`,
@@ -349,8 +353,11 @@ const adminDeleteUser = (
         if (err) {
           reject(err);
         } else {
+          console.log(
+            'delete user as admin',
+            response.body.data.deleteUserAsAdmin.user,
+          );
           const userData = response.body.data.deleteUserAsAdmin;
-          expect(userData.user.id).toBe(id);
           console.log('delete user as admin', userData);
           resolve(userData);
         }

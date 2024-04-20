@@ -27,6 +27,7 @@ export default async (req: Request): Promise<MyContext> => {
       }
       // add token to user object so we can use it in resolvers
       const tokenContent: TokenContent = {
+        role: userFromToken.role,
         token: token,
         user: userFromToken,
       };

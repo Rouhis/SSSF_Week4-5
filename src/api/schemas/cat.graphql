@@ -45,16 +45,21 @@ input CatModify {
   weight: Float
   birthdate: DateTime
   location: LocationInput
+  filename: String
 }
 
+type CatMessage {
+  message: String!
+  cat: Cat
+}
 type Mutation {
-  createCat(input: CatInput!): Cat
+  createCat(input: CatInput!): CatMessage
   """
   Role 'admin' or 'user' are determined by the token
   """
-  updateCat(id: ID!, input: CatModify!): Cat
+  updateCat(id: ID!, input: CatModify!): CatMessage
   """
   Role 'admin' or 'user' are determined by the token
   """
-  deleteCat(id: ID!): Cat
+  deleteCat(id: ID!): CatMessage
 }

@@ -38,11 +38,16 @@ type Query {
   checkToken: UserResponse
 }
 
+type UserDeleteResponse {
+  message: String!
+  user: User
+}
+
 type Mutation {
   login(credentials: Credentials!): LoginResponse
   register(user: UserInput!): UserResponse
   updateUser(user: UserModify!): UserResponse
-  deleteUser: UserResponse
+  deleteUser: UserDeleteResponse
   """
   Separate mutations for admin because of rest api
   """
@@ -50,5 +55,5 @@ type Mutation {
   """
   Separate mutations for admin because of rest api
   """
-  deleteUserAsAdmin(id: ID!): UserResponse
+  deleteUserAsAdmin(id: ID!): UserDeleteResponse
 }

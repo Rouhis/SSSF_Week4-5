@@ -75,19 +75,22 @@ const postCat = (
       .send({
         query: `mutation CreateCat($input: CatInput!) {
           createCat(input: $input) {
-            birthdate
-            cat_name
-            filename
-            weight
-            owner {
-              email
-              user_name
+            message
+            cat {
               id
-            }
-            id
-            location {
-              coordinates
-              type
+              cat_name
+              weight
+              birthdate
+              owner {
+                id
+                user_name
+                email
+              }
+              location {
+                type
+                coordinates
+              }
+              filename
             }
           }
         }`,
@@ -98,7 +101,7 @@ const postCat = (
           reject(err);
         } else {
           const cat = vars.input;
-          const newCat: CatTest = response.body.data.createCat;
+          const newCat: CatTest = response.body.data.createCat.cat;
           expect(newCat).toHaveProperty('id');
           expect(newCat.cat_name).toBe(cat.cat_name);
           expect(newCat.weight).toBe(cat.weight);
@@ -216,23 +219,24 @@ const getSingleCat = (
       .set('Content-type', 'application/json')
       .send({
         query: `query CatById($catByIdId: ID!) {
-          catById(id: $catByIdId) {
-            birthdate
-            cat_name
-            filename
-            id
-            location {
-              type
-              coordinates
-            }
-            owner {
-              email
+          catById(id: $catByIdId) {  
               id
-              user_name
+              cat_name
+              weight
+              birthdate
+              owner {
+                id
+                user_name
+                email
+              }
+              location {
+                type
+                coordinates
+              }
+              filename
             }
-            weight
-          }
-        }`,
+        }
+        `,
         variables: {
           catByIdId: id,
         },
@@ -241,7 +245,9 @@ const getSingleCat = (
         if (err) {
           reject(err);
         } else {
+          console.log('response.body:', response.body);
           const cat = response.body.data.catById;
+          console.log('cat:', cat);
           expect(cat).toHaveProperty('id');
           expect(cat).toHaveProperty('cat_name');
           expect(cat).toHaveProperty('weight');
@@ -280,11 +286,25 @@ const userPutCat = (
       .set('Content-type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        query: `mutation UpdateCat($updateCatId: ID!, $input: CatModify!) {
+        query: `mutation Mutation($updateCatId: ID!, $input: CatModify!) {
           updateCat(id: $updateCatId, input: $input) {
-            cat_name
-            birthdate
-            weight
+            message
+            cat {
+              id
+              cat_name
+              weight
+              birthdate
+              owner {
+                id
+                user_name
+                email
+              }
+              location {
+                type
+                coordinates
+              }
+              filename
+            }
           }
         }`,
         variables: vars,
@@ -294,7 +314,8 @@ const userPutCat = (
           reject(err);
         } else {
           const cat = vars.input;
-          const updatedCat = response.body.data.updateCat;
+          console.log('response.body:', response.body.data);
+          const updatedCat = response.body.data.updateCat.cat;
           expect(updatedCat.cat_name).toBe(cat.cat_name);
           expect(updatedCat.weight).toBe(cat.weight);
           expect(updatedCat).toHaveProperty('birthdate');
@@ -315,11 +336,25 @@ const wrongUserPutCat = (
       .set('Content-type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        query: `mutation UpdateCat($updateCatId: ID!, $input: CatModify!) {
+        query: `mutation Mutation($updateCatId: ID!, $input: CatModify!) {
           updateCat(id: $updateCatId, input: $input) {
-            cat_name
-            birthdate
-            weight
+            message
+            cat {
+              id
+              cat_name
+              weight
+              birthdate
+              owner {
+                id
+                user_name
+                email
+              }
+              location {
+                type
+                coordinates
+              }
+              filename
+            }
           }
         }`,
         variables: vars,
@@ -328,7 +363,7 @@ const wrongUserPutCat = (
         if (err) {
           reject(err);
         } else {
-          const updatedCat = response.body.data.updateCat;
+          const updatedCat = response.body.data.updateCat.cat;
           expect(updatedCat).toBe(null);
           resolve(updatedCat);
         }
@@ -358,7 +393,23 @@ const userDeleteCat = (
       .send({
         query: `mutation DeleteCat($deleteCatId: ID!) {
           deleteCat(id: $deleteCatId) {
-            id
+            message
+            cat {
+              id
+              cat_name
+              weight
+              birthdate
+              owner {
+                id
+                user_name
+                email
+              }
+              location {
+                type
+                coordinates
+              }
+              filename
+            }
           }
         }`,
         variables: {
@@ -369,7 +420,7 @@ const userDeleteCat = (
         if (err) {
           reject(err);
         } else {
-          const deletedCat = response.body.data.deleteCat;
+          const deletedCat = response.body.data.deleteCat.cat;
           expect(deletedCat.id).toBe(id);
           resolve(deletedCat);
         }
@@ -390,7 +441,23 @@ const wrongUserDeleteCat = (
       .send({
         query: `mutation DeleteCat($deleteCatId: ID!) {
           deleteCat(id: $deleteCatId) {
-            id
+            message
+            cat {
+              id
+              cat_name
+              weight
+              birthdate
+              owner {
+                id
+                user_name
+                email
+              }
+              location {
+                type
+                coordinates
+              }
+              filename
+            }
           }
         }`,
         variables: {
@@ -401,6 +468,7 @@ const wrongUserDeleteCat = (
         if (err) {
           reject(err);
         } else {
+          console.log('response.body: delete', response.body.data);
           const deletedCat = response.body.data.deleteCat;
           expect(deletedCat).toBe(null);
           resolve(deletedCat);
