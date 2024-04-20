@@ -152,10 +152,12 @@ describe('Testing graphql api', () => {
 
   // test post cat data
   let catID1: string;
+  //catID1 = '6621839405d8001e273da65c';
   it('should post cat data with file and location', async () => {
     console.log(catData1);
     const cat = await postCat(app, catData1, userData.token!);
     catID1 = cat.id!;
+    console.log('ignore', cat.id);
   });
 
   // test get all cats
@@ -165,6 +167,7 @@ describe('Testing graphql api', () => {
 
   // test get single cat
   it('should return single cat', async () => {
+    console.log('catID1', catID1);
     await getSingleCat(app, catID1);
   });
 
